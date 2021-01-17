@@ -2,16 +2,12 @@ use std::time::{Duration, SystemTime};
 use std::thread::sleep;
 
 use dotenv;
+mod env;
+use env::get_env_variable;
 
 fn main() {
-    let token = match dotenv::var("TELEGRAM_BOT_TOKEN") {
-        Ok(value) => value,
-        Err(_) => {
-            panic!("{}Файл .env не существует или в нём нет системной переменной TELEGRAM_BOT_TOKEN{}",
-                "\x1b[31m", "\x1b[0m"
-            );
-        }
-    };
+    let token = get_env_variable(String::from("TELEGRAM_BOT_TOKEN"));
+    let admin = get_env_variable(String::from("TELEGRAM_ADMIN_ID"));
 
     while true {
         let now = SystemTime::now();
