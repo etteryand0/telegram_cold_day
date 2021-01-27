@@ -61,6 +61,18 @@ while True:
     else:
         log.tell('Aborting due to ugms14.ru network issues')
         sys.exit()
+
+    # check if information was updated at 6 am
+    hour = meta.split(' в ')[1].split(' час')[0].strip()
+    if hour == '03' or hour == '3':
+        log.tell('Information hadn`t updated yet. Current info hour is ' + hour)
+        
+        del log
+        time.sleep(60*5)
+
+        continue
+    else:
+        log.tell('Information updated! Current info hour is ' + hour)
     
     text = str()
 
@@ -98,11 +110,20 @@ while True:
 
     now = datetime.datetime.now()
     tomorrow = now + datetime.timedelta(days=1)
-    tomorrow = tomorrow.replace(hour=6, minute=10, second=0, microsecond=0)
+    tomorrow = tomorrow.replace(hour=6, minute=15, second=0, microsecond=0)
 
     timedelta = tomorrow - now
     
-    log.tell('Sleep for '+str(timedelta))
+    sleep = int(timedelta.total_seconds())
 
+    if sleep > 86400:
+        tomorrow = now
+        tomorrow = tomorrow.replace(hour=6, minute=15, second=0, microsecond=0)
+
+        timedelta = tomorrow - now
+        sleep = int(timedelta.total_seconds())
+    
+    log.tell('Sleep for '+str(timedelta))
+    
     del log
-    time.sleep(int(timedelta.total_seconds()))
+    time.sleep(sleep)
